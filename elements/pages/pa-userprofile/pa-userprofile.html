@@ -1,0 +1,38 @@
+<link rel="import" href="widgets/pa-inputs-validation-userprofile.html">
+
+<dom-module id="pa-userprofile">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}"  cols="{{cols}}"></pa-widgets> -->
+<!-- <paper-material class="widgetAuto" elevation="1"> -->
+<pa-inputs-validation-userprofile></pa-inputs-validation-userprofile>
+<!--     </paper-material> -->
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-userprofile',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+
+              {
+                title: 'Search',
+                component: 'pa-inputs-validation-userprofile'
+              },
+
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

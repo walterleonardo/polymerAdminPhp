@@ -1,0 +1,67 @@
+<dom-module id="pa-inputs-validation-addreservation">
+  <template>
+    <style include="shared-styles"></style>
+
+    <div class="vertical-section">
+    <paper-input label="User Name" required auto-validate error-message="needs some text!"></paper-input>
+
+      <paper-input label="Start Date" required auto-validate error-message="needs some text!"></paper-input>
+      
+      <paper-input label="End Date" required auto-validate error-message="needs some text!"></paper-input>
+
+	  <paper-input label="Collection time" required auto-validate error-message="needs some text!"></paper-input>
+
+	  
+ <pa-simple-grid xs-cols="3">
+      <div>
+        <h4>Accesories</h4>
+        <div class="horizontal-section">
+          <div class="line"><paper-toggle-button checked></paper-toggle-button><span>Air Conditioner</span></div>
+          <div class="line"><paper-toggle-button></paper-toggle-button><span>Automatic</span></div>
+          <div class="line"><paper-toggle-button ></paper-toggle-button><span>Diesel</span></div>
+          <div class="line"><paper-toggle-button ></paper-toggle-button><span>Child Seat</span></div>
+          <div class="line"><paper-toggle-button ></paper-toggle-button><span>GPS</span></div>
+
+        </div>
+      </div>
+
+      <div>
+        <h4>Seats</h4>
+        <div class="horizontal-section">
+          <div class="line"><paper-toggle-button disabled></paper-toggle-button><span>2 Seats</span></div>
+          <div class="line"><paper-toggle-button disabled></paper-toggle-button><span>4 Seats</span></div>
+          <div class="line"><paper-toggle-button checked disabled></paper-toggle-button><span>5 Seats</span></div>
+          <div class="line"><paper-toggle-button  disabled></paper-toggle-button><span>7 Seats</span></div>
+          <div class="line"><paper-toggle-button  disabled></paper-toggle-button><span>More</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h4>Add</h4>
+        <div class="horizontal-section">
+          <div class="line"><paper-toggle-button disabled class="blue"></paper-toggle-button><span>Smoking</span></div>
+          <div class="line"><paper-toggle-button class="red"></paper-toggle-button><span>USB</span></div>
+          
+        </div>
+      </div>
+    </pa-simple-grid>
+ 
+ <paper-input label="Vehicles available" required auto-validate error-message="needs some text!"></paper-input>
+
+      <br>
+
+      <paper-button tabindex="0" class="green ripple" raised onclick="validate()">VALIDATE</paper-button>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-inputs-validation-addreservation'
+      });
+    })();
+  </script>
+
+</dom-module>

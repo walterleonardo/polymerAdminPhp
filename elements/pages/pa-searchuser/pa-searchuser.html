@@ -1,0 +1,39 @@
+<link rel="import" href="widgets/pa-inputs-validation-searchuser.html">
+<link rel="import" href="widgets/pa-datafromuser.html">
+
+<dom-module id="pa-searchuser">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}"  cols="{{cols}}"></pa-widgets> -->
+<!-- <paper-material class="widgetAuto" elevation="1"> -->
+<pa-inputs-validation-searchuser></pa-inputs-validation-searchuser>
+<!--     </paper-material> -->
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-searchuser',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+
+              {
+                title: 'Search',
+                component: 'pa-inputs-validation-searchuser'
+              },
+
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

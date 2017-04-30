@@ -1,0 +1,215 @@
+<dom-module id="pa-inputs-validation-addclient">
+   <template>
+    <style include="shared-styles"></style>
+    <style is="custom-style">
+        paper-button.custom:hover {
+        background-color: var(--paper-indigo-100);
+        }
+
+        paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+        };
+        }
+        #addclientOK {
+        --paper-toast-background-color: green;
+        --paper-toast-color: white;
+        }
+        #addclientError {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+#addclientErrorUser {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+.confirmMessage{
+      margin: 0;
+      padding: 0;
+      font-size: .8em;
+    }
+    </style>
+
+<pa-simple-grid>
+
+      <div>
+        <paper-material class="widgetAuto" elevation="1">
+
+<form is="iron-form" method="post" action="pa-addclient-validation.php" id="formaddclient">
+          <pa-simple-grid md-cols="2">
+            <div>
+
+           <paper-input char-counter error-message="please complete" name="firstname" value="{{firstname}}" label="Firstname" maxlength="25" required></paper-input>
+ <paper-input char-counter error-message="please complete" name="lastname" value="{{lastname}}" label="lastname" maxlength="25" ></paper-input>
+  <paper-input char-counter error-message="please complete" name="passport" value="{{passport}}" label="passport" maxlength="25" required></paper-input>
+
+
+
+
+<div hidden="true">
+            <h3>Output</h3>
+            <div class="output" ></div>
+            <br>
+            <h3>Answer from server</h3>
+            <div class="outputServer"></div>
+            <br>
+</div>
+
+
+
+            </div>
+            <div>
+<paper-input char-counter error-message="please complete" name="mail" value="{{mail}}" pattern="^(.)+@[a-z A-Z 0-9 _]+?\.[a-zA-Z]{2,3}$" label="mail" maxlength="25" auto-validate="true"></paper-input>
+ <paper-input char-counter error-message="please complete" name="phone" value="{{phone}}" label="phone" maxlength="25" pattern="[0-9 +]"></paper-input>
+ <paper-input char-counter error-message="please complete" name="address" value="{{address}}" label="address" maxlength="25" ></paper-input>
+
+
+           </div>
+<div id="permitEdit" hidden="true">
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddclient').submit()"><iron-icon icon="icons:send"></iron-icon>RESERVATION</paper-button>
+<br>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddclient').reset();"><iron-icon icon="icons:send"></iron-icon>CLEAR</paper-button>
+</div>
+          </pa-simple-grid>
+<br>
+<br>
+
+        </form>
+<hr>
+<br>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddclient').reset();"><iron-icon icon="icons:send"></iron-icon>CLEAR</paper-button>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddclient').submit()" id="buttonAdd" ><iron-icon icon="icons:send" ></iron-icon>ADD</paper-button>
+
+        </paper-material>
+      </div>
+
+    </pa-simple-grid>
+
+    <paper-toast id="addclientOK" text="Client created!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="addclientError" text="Error!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="addclientErrorUser" text="Username or Passport in use!!!" class="fit-bottom"></paper-toast>
+
+
+
+
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-inputs-validation-addclient',
+        properties: {
+            username: {
+                type: String,
+                value: ""
+            },
+firstname: {
+                type: String,
+                value: ""
+            },
+lastname: {
+                type: String,
+                value: ""
+            },
+phone: {
+                type: String,
+                value: ""
+            },
+mail: {
+                type: String,
+                value: ""
+            },
+address: {
+                type: String,
+                value: ""
+            },
+            user: {
+                type: String,
+                value: "{{username}}"
+            },
+            error_username: {
+                type: String,
+                value:"Username is Invalid!"
+            },
+            error_password: {
+                type: String,
+                value:"Password is needed!"
+            },
+            //app.session = "{{username}}";
+        },
+        listeners: {
+            'iron-form-response': 'formResponse',
+            'iron-form-submit': 'formSubmit',
+            'iron-form-error': 'formError'
+        },
+        passmatch: function(e){
+              var password = encodeURIComponent(this.pass);
+              var confirmPassword = encodeURIComponent(this.repass);
+              if(password != confirmPassword){
+                // do something
+              }
+            },
+        formSubmit: function (event) {
+            this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        },
+      formClear: function () {
+                  this.firstname = "";
+              },
+        formResponse: function (event, response) {
+            console.log(event.detail);
+            if (200 === response.xhr.status) {
+                var data = response.xhr;
+                console.log(data);
+                console.log(data.response);
+                console.log(data.response.res);
+                this.querySelector('.outputServer').innerHTML = data.response.res;
+                if (data.response.res == "success") {
+                  addclientOK.open();
+                  document.getElementById("permitEdit").removeAttribute("hidden");
+                  app.session = true;
+                  } else if (data.response.res == "user") {
+                  addclientErrorUser.open();
+                  document.getElementById("username").focus();
+                  } else{
+                    addclientError.open();
+                  }
+            } else {
+              this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+              messageFooterERROR.open();
+              app.session = false;
+            }
+
+        },
+        formError: function (event) {
+            this.querySelector('.outputServer').innerHTML = event.detail.error;
+        },
+        clickHandler: function(e) {
+          var button = e.target;
+          while (!button.hasAttribute('data-dialog') && button !== document.body) {
+            button = button.parentElement;
+          }
+
+          if (!button.hasAttribute('data-dialog')) {
+            return;
+          }
+
+          var id = button.getAttribute('data-dialog');
+          var dialog = document.getElementById(id);
+          if (dialog) {
+            dialog.open();
+          }
+        }
+      });
+
+
+    })();
+
+
+  </script>
+
+
+</dom-module>

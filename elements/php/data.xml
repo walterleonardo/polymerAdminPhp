@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pages>
+  <link>
+    <name>pepe</name>
+    <data>data del viaje de pepe1</data>
+  </link>
+  <link>
+    <name>jose</name>
+    <data>data del viaje de jose</data>
+  </link>
+  <link>
+    <name>luis</name>
+    <data>data del viaje de luis</data>
+  </link>
+  <link>
+    <name>pedro</name>
+    <data>data del viaje de pedro</data>
+  </link>
+  <link>
+    <name>carlos</name>
+    <data>data del viaje de carlos</data>
+  </link>
+  <link>
+    <name>pepe</name>
+    <data>data del viaje de pepe2</data>
+  </link>
+</pages>

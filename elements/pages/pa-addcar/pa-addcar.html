@@ -1,0 +1,34 @@
+<link rel="import" href="widgets/pa-inputs-validation-addcar.html">
+<h1>addCar</h1>
+<dom-module id="pa-addcar">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}" cols="{{cols}}"></pa-widgets> -->
+    <pa-inputs-validation-addcar></pa-inputs-validation-addcar>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-addcar',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+
+              {
+                title: 'Validation',
+                component: 'pa-inputs-validation-addcar'
+              },
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

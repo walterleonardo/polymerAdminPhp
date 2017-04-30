@@ -1,0 +1,204 @@
+<dom-module id="pa-inputs-validation-addcar">
+   <template>
+    <style include="shared-styles"></style>
+    <style is="custom-style">
+        paper-button.custom:hover {
+        background-color: var(--paper-indigo-100);
+        }
+
+        paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+        };
+        }
+        #addcarOK {
+        --paper-toast-background-color: green;
+        --paper-toast-color: white;
+        }
+        #addcarError {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+#addcarErrorUser {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+.confirmMessage{
+      margin: 0;
+      padding: 0;
+      font-size: .8em;
+    }
+    </style>
+
+<pa-simple-grid>
+
+      <div>
+        <paper-material class="widgetAuto" elevation="1">
+
+<form is="iron-form" method="post" action="pa-addcar-validation.php" id="formaddcar">
+          <pa-simple-grid md-cols="3">
+            <div>
+
+<paper-input char-counter error-message="please complete" name="carid" value="{{carid}}" label="Car ID" maxlength="25" required></paper-input>
+ <paper-input char-counter error-message="please complete" name="brand" value="{{brand}}" label="Brand" maxlength="25" ></paper-input>
+  <paper-input char-counter error-message="please complete" name="model" value="{{model}}" label="Model" maxlength="25" required></paper-input>
+<paper-input char-counter error-message="please complete" name="year" value="{{year}}" label="Year" Allowed-pattern="[0-9]" maxlength="25" ></paper-input>
+
+            </div>
+            <div>
+<paper-input char-counter error-message="please complete" name="running" value="{{running}}"  label="In use?" maxlength="25"></paper-input>
+ <paper-input char-counter error-message="please complete" name="gps" value="{{gps}}" label="Gps installed" maxlength="25" pattern="[0-9 +]"></paper-input>
+<paper-input char-counter error-message="please complete" name="babyseat" value="{{babyseat}}" label="Baby Seat" maxlength="25" ></paper-input>
+<paper-input char-counter error-message="please complete" name="gasfull" value="{{gasfull}}" label="Gas full?" maxlength="25" ></paper-input>
+
+            </div>
+            <div>
+<paper-input char-counter error-message="please complete" name="itv" value="{{itv}}" label="itv" maxlength="25" ></paper-input>
+<paper-input char-counter error-message="please complete" name="inusedatestart" value="{{inusedatestart}}" label="First date in use" maxlength="25" ></paper-input>
+<paper-input char-counter error-message="please complete" name="inusedateend" value="{{inusedateend}}" label="Last date in use" maxlength="25" ></paper-input>
+<paper-input char-counter error-message="please complete" name="info" value="{{info}}" label="info" maxlength="255" ></paper-input>
+           </div>
+<div id="permitEdit" hidden="true">
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddcar').submit()"><iron-icon icon="icons:send"></iron-icon>RESERVATION</paper-button>
+<br>
+</div>
+          </pa-simple-grid>
+<br>
+<br>
+
+        </form>
+<hr>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddcar').reset();"><iron-icon icon="icons:send"></iron-icon>CLEAR</paper-button>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formaddcar').submit()" id="buttonAdd" ><iron-icon icon="icons:send" ></iron-icon>ADD</paper-button>
+
+        </paper-material>
+      </div>
+
+    </pa-simple-grid>
+
+<div >
+            <h3>Output</h3>
+            <div class="output" ></div>
+            <br>
+            <h3>Answer from server</h3>
+            <div class="outputServer"></div>
+            <br>
+</div>
+
+    <paper-toast id="addcarOK" text="Client created!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="addcarError" text="Error!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="addcarErrorUser" text="Car ID in use!!!" class="fit-bottom"></paper-toast>
+
+
+
+
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-inputs-validation-addcar',
+        properties: {
+            username: {
+                type: String,
+                value: ""
+            },
+firstname: {
+                type: String,
+                value: ""
+            },
+lastname: {
+                type: String,
+                value: ""
+            },
+phone: {
+                type: String,
+                value: ""
+            },
+mail: {
+                type: String,
+                value: ""
+            },
+address: {
+                type: String,
+                value: ""
+            },
+            user: {
+                type: String,
+                value: "{{username}}"
+            },
+            error_username: {
+                type: String,
+                value:"Username is Invalid!"
+            },
+            error_password: {
+                type: String,
+                value:"Password is needed!"
+            },
+        },
+        listeners: {
+            'iron-form-response': 'formResponse',
+            'iron-form-submit': 'formSubmit',
+            'iron-form-error': 'formError'
+        },
+        formSubmit: function (event) {
+            this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        },
+        formResponse: function (event, response) {
+            console.log(event.detail);
+            if (200 === response.xhr.status) {
+                var data = response.xhr;
+                console.log(data);
+                console.log(data.response);
+                console.log(data.response.res);
+                this.querySelector('.outputServer').innerHTML = data.response.res;
+                if (data.response.res == "success") {
+                  addcarOK.open();
+                  document.getElementById("permitEdit").removeAttribute("hidden");
+                  app.session = true;
+                  } else if (data.response.res == "user") {
+                  addcarErrorUser.open();
+                  document.getElementById("username").focus();
+                  } else{
+                    addcarError.open();
+                  }
+            } else {
+              this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+              messageFooterERROR.open();
+              app.session = false;
+            }
+
+        },
+        formError: function (event) {
+            this.querySelector('.outputServer').innerHTML = event.detail.error;
+        },
+        clickHandler: function(e) {
+          var button = e.target;
+          while (!button.hasAttribute('data-dialog') && button !== document.body) {
+            button = button.parentElement;
+          }
+
+          if (!button.hasAttribute('data-dialog')) {
+            return;
+          }
+
+          var id = button.getAttribute('data-dialog');
+          var dialog = document.getElementById(id);
+          if (dialog) {
+            dialog.open();
+          }
+        }
+      });
+
+
+    })();
+
+
+  </script>
+
+
+</dom-module>

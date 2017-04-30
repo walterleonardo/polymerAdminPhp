@@ -1,0 +1,246 @@
+<dom-module id="pa-inputs-validation-adduser">
+   <template>
+    <style include="shared-styles"></style>
+    <style is="custom-style">
+        paper-button.custom:hover {
+        background-color: var(--paper-indigo-100);
+        }
+
+        paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+        };
+        }
+        #addUserOK {
+        --paper-toast-background-color: green;
+        --paper-toast-color: white;
+        }
+        #addUserError {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+#addUserErrorUser {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+.confirmMessage{
+      margin: 0;
+      padding: 0;
+      font-size: .8em;
+    }
+    </style>
+
+<pa-simple-grid>
+
+      <div>
+        <paper-material class="widgetAuto" elevation="1">
+
+<form is="iron-form" method="post" action="pa-adduser-validation.php" id="formAddUser">
+          <pa-simple-grid md-cols="2">
+            <div>
+
+            <paper-input id="username" char-counter error-message="{{error_username}}" name="username" value="{{username}}" label="Username Email" pattern="^(.)+@[a-z A-Z 0-9 _]+?\.[a-zA-Z]{2,3}$" maxlength="25" auto-validate="true"></paper-input>
+
+            <paper-password-input id="pass1img" char-counter name="password" label="Password" required></paper-password-input>
+            <paper-password-input id="pass2img" char-counter name="password2" label="Confirm password" auto-validate error-message="   Passwords need to match" required onkeyup="checkPassImg(); return false;">
+          </paper-password-input> <br><span id="confirmMessageImg" class="confirmMessage"></span> 
+
+
+
+
+<div hidden="true">
+            <h3>Output</h3>
+            <div class="output" ></div>
+            <br>
+            <h3>Answer from server</h3>
+            <div class="outputServer"></div>
+            <br>
+</div>
+
+
+
+            </div>
+            <div>
+ <paper-input char-counter error-message="please complete" name="firsname" value="{{firsname}}" label="Firsname" maxlength="25" ></paper-input>
+ <paper-input char-counter error-message="please complete" name="lastname" value="{{lastname}}" label="lastname" maxlength="25" ></paper-input>
+ <paper-input char-counter error-message="please complete" name="mail" value="{{mail}}" label="mail" maxlength="25" ></paper-input>
+ <paper-input char-counter error-message="please complete" name="phone" value="{{phone}}" label="phone" maxlength="25" ></paper-input>
+ <paper-input char-counter error-message="please complete" name="addres" value="{{addres}}" label="addres" maxlength="25" ></paper-input>
+
+
+           </div>
+<div id="permitEdit" hidden="true">
+<paper-button raised class="custom indigo" onclick="document.getElementById('formAddUser').submit()"><iron-icon icon="icons:send"></iron-icon>EDIT</paper-button>
+<br>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formAddUser').reset();"><iron-icon icon="icons:send"></iron-icon>CLEAR</paper-button>
+</div>
+          </pa-simple-grid>
+<br>
+<br>
+
+        </form>
+<hr>
+<paper-button raised class="custom indigo" onclick="document.getElementById('formAddUser').submit()" id="buttonAdd" ><iron-icon icon="icons:send" ></iron-icon>ADD</paper-button>
+
+        </paper-material>
+      </div>
+
+    </pa-simple-grid>
+
+    <paper-toast id="addUserOK" text="Created user, you can login!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="addUserError" text="Error!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="addUserErrorUser" text="Username in use!!!" class="fit-bottom"></paper-toast>
+
+
+
+
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-inputs-validation-adduser',
+        properties: {
+            username: {
+                type: String,
+                value: ""
+            },
+firstname: {
+                type: String,
+                value: ""
+            },
+lastname: {
+                type: String,
+                value: ""
+            },
+phone: {
+                type: String,
+                value: ""
+            },
+mail: {
+                type: String,
+                value: ""
+            },
+address: {
+                type: String,
+                value: ""
+            },
+            user: {
+                type: String,
+                value: "{{username}}"
+            },
+            error_username: {
+                type: String,
+                value:"Username is Invalid!"
+            },
+            error_password: {
+                type: String,
+                value:"Password is needed!"
+            },
+            //app.session = "{{username}}";
+        },
+        listeners: {
+            'iron-form-response': 'formResponse',
+            'iron-form-submit': 'formSubmit',
+            'iron-form-error': 'formError'
+        },
+        passmatch: function(e){
+              var password = encodeURIComponent(this.pass);
+              var confirmPassword = encodeURIComponent(this.repass);
+              if(password != confirmPassword){
+                // do something
+              }
+            },
+        formSubmit: function (event) {
+            this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        },
+      formClear: function () {
+                  this.firstname = "";
+              },
+        formResponse: function (event, response) {
+            console.log(event.detail);
+            if (200 === response.xhr.status) {
+                var data = response.xhr;
+                console.log(data);
+                console.log(data.response);
+                console.log(data.response.res);
+                this.querySelector('.outputServer').innerHTML = data.response.res;
+                if (data.response.res == "success") {
+                  addUserOK.open();
+                  document.getElementById("permitEdit").removeAttribute("hidden");
+                  app.session = true;
+                  } else if (data.response.res == "user") {
+                  addUserErrorUser.open();
+                  document.getElementById("username").focus();
+                  } else{
+                    addUserError.open();
+                  }
+            } else {
+              this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+              messageFooterERROR.open();
+              app.session = false;
+            }
+
+        },
+        formError: function (event) {
+            this.querySelector('.outputServer').innerHTML = event.detail.error;
+        },
+        clickHandler: function(e) {
+          var button = e.target;
+          while (!button.hasAttribute('data-dialog') && button !== document.body) {
+            button = button.parentElement;
+          }
+
+          if (!button.hasAttribute('data-dialog')) {
+            return;
+          }
+
+          var id = button.getAttribute('data-dialog');
+          var dialog = document.getElementById(id);
+          if (dialog) {
+            dialog.open();
+          }
+        }
+      });
+
+
+    })();
+
+
+function checkPassImg(){
+      //Store the password field objects into variables ...
+      var password = document.getElementById('pass1img');
+      var password2 = document.getElementById('pass2img');
+      //Store the Confimation Message Object ...
+      var message = document.getElementById('confirmMessageImg');
+      //Set the colors we will be using ...
+      var goodColor = "#66cc66";
+      var badColor = "#ff6666";
+      //Compare the values in the password field 
+      //and the confirmation field
+      if(password.value == password2.value){
+        //The passwords match. 
+        //Set the color to the good color and inform
+        //the user that they have entered the correct password 
+        password2.style.backgroundColor = goodColor;
+        message.style.color = goodColor;
+        document.getElementById('buttonAdd').disabled = false;
+        message.innerHTML = '<img src="images/tick.png" alt="Passwords Match!">';
+      }else{
+        //The passwords do not match.
+        //Set the color to the bad color and
+        //notify the user.
+        password2.style.backgroundColor = badColor;
+        message.style.color = badColor;
+        document.getElementById('buttonAdd').disabled = true;
+        message.innerHTML = '<img src="images/notification_error.png" alt="Passwords Do Not Match!">';
+      }
+    }  
+  </script>
+
+
+</dom-module>

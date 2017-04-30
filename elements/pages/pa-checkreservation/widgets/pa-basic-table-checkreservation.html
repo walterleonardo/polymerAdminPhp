@@ -1,0 +1,95 @@
+<link rel="import" href="pa-table-checkreservation.html">
+
+<dom-module id="pa-basic-table-checkreservation">
+  <template>
+    <style include="shared-styles"></style>
+
+<template is="dom-bind" id="app">
+<style>
+    #grid3 data-table-cell:not([header]) {
+      height: auto;
+    }
+    #grid3 .index {
+    color: red;
+    
+  } 
+  #grid3 {
+   color: black;
+/*
+    display: flex;
+   align-items: center;
+*/
+  }
+  </style>
+
+<div>
+        <paper-material class="widgetAuto" elevation="1">
+
+<iron-ajax auto id="GetData" method="post" url="db.php" handle-as="json" last-response="{{data}}" ></iron-ajax>
+  <iron-data-table id="grid3" items="{{data}}" selection-enabled multi-selection>
+<!--
+    <data-table-column name="Id" filter-by="id">
+      <template><div class="index">[[item.id]]</div></template>
+    </data-table-column>
+-->
+</data-table-column>
+        <data-table-column name="Date from" filter-by="startdate" sort-by="startdate">
+      <template>[[item.startdate]]</template>
+    </data-table-column>
+</data-table-column>
+        <data-table-column name="Date to" filter-by="enddate" sort-by="enddate">
+      <template>[[item.enddate]]</template>
+    </data-table-column>
+
+    <data-table-column name="First Name" filter-by="firstname" sort-by="firstname">
+      <template>[[item.firstname]]</template>
+    </data-table-column>
+    <data-table-column name="Last Name" filter-by="lastname" sort-by="lastname">
+      <template>[[item.lastname]]</template>
+    </data-table-column>
+        <data-table-column name="AutoID" filter-by="autoID">
+      <template>[[item.autoID]]</template>
+    </data-table-column>
+        <data-table-column name="Info" filter-by="info">
+      <template>[[item.info]]</template>
+    </data-table-column>
+ <data-table-column name="Phone" filter-by="phone">
+      <template>[[item.phone]]</template>
+    </data-table-column>
+ <data-table-column name="Email" filter-by="mail">
+      <template>[[item.mail]]</template>
+    </data-table-column>
+        <data-table-column name="Code" filter-by="code">
+      <template>[[item.code]]</template>
+    </data-table-column>
+        <data-table-column name="Gass Full" filter-by="gasfull">
+      <template>[[item.gasfull]]</template>
+    </data-table-column>
+  </iron-data-table>
+</template>
+</paper-material>
+</div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-basic-table-checkreservation',
+        properties: {
+	        
+        }
+      });
+    })();
+
+			var app = document.querySelector('#app');
+			
+			app.toFixedOne = function(value){
+				return value.toFixed(1);
+			};
+			app.toPercentage = function(value){
+				return Math.round(value * 10000)/100 + '%';
+			};
+		</script> 
+</dom-module>

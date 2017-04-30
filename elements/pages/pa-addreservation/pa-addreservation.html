@@ -1,0 +1,35 @@
+<link rel="import" href="widgets/pa-inputs-validation-addreservation.html">
+
+<dom-module id="pa-addreservation">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}" cols="{{cols}}"></pa-widgets> -->
+<pa-inputs-validation-addreservation></pa-inputs-validation-addreservation>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-addreservation',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+
+              {
+                title: 'Validation',
+                component: 'pa-inputs-validation-addreservation'
+              },
+
+             ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

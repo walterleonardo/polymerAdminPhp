@@ -1,0 +1,34 @@
+<link rel="import" href="widgets/pa-inputs-validation-adduser.html">
+
+<dom-module id="pa-adduser">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}" cols="{{cols}}"></pa-widgets> -->
+<pa-inputs-validation-adduser></pa-inputs-validation-adduser>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-adduser',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+              {
+                title: 'Validation',
+                component: 'pa-inputs-validation-adduser'
+              },
+
+             ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

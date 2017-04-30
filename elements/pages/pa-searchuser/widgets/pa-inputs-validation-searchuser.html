@@ -1,0 +1,292 @@
+<dom-module id="pa-inputs-validation-searchuser">
+ <template>
+    <style include="shared-styles"></style>
+    <style is="custom-style">
+        paper-button.custom:hover {
+        background-color: var(--paper-indigo-100);
+        }
+
+        paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+        };
+        }
+        #formSearchUserOK {
+        --paper-toast-background-color: green;
+        --paper-toast-color: white;
+        }
+        #formSearchUserError {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+        .shadow {
+        display: inline-block;
+        padding: 8px;
+        margin: 16px;
+        height: 50px;
+        width: 50px;
+      }
+      .mobile-app {
+        max-width: 320px;
+      }
+
+      .toolbar {
+        height: 144px;
+        padding: 16px;
+        background: var(--default-primary-color);
+        color: var(--text-primary-color);
+        @apply(--paper-font-display1);
+      }
+
+      .item, .disabled-item {
+        position: relative;
+        padding: 8px;
+        border: 1px solid;
+        border-color: var(--divider-color);
+        border-top: 0;
+      }
+
+      .item .primary {
+        color: var(--primary-text-color);
+        @apply(--paper-font-body2);
+      }
+
+      .item .secondary {
+        color: var(--secondary-text-color);
+        @apply(--paper-font-body1);
+      }
+
+      .disabled-item {
+        color: var(--disabled-text-color);
+        @apply(--paper-font-body2);
+      }
+
+      .shadow-6dp {
+        @apply(--shadow-elevation-6dp);
+      }
+
+  .team-photo img {
+        max-width: 298px;
+        max-height: 298px;
+      }
+
+      .team-info {
+        box-sizing: border-box;
+        padding-left: 24px;
+        font-size: 14px;
+      }
+
+      .team-info paper-button {
+        display: block;
+        margin: 24px 0;
+        max-width: 250px;
+        box-sizing: border-box;
+      }
+
+      /*@media (max-width: 1120px) and (min-width: $resXS) {
+        @include layout-collapsed();
+      }*/
+
+      @media (max-width: 1420px) and (min-width: 1221px), (max-width: 870px) and (min-width: 770px), (max-width: 575px) {
+        .team-photo {
+          max-width: 200px;
+          overflow: hidden;
+        }
+        .team-photo img {
+          margin-left: -46px
+        }
+      }
+
+      @media (max-width: 1220px) and (min-width: 992px), (max-width: 770px) and (min-width: 641px) {
+        .team-photo {
+          display: none;
+        }
+        .team-info {
+          padding-left: 0;
+        }
+      }
+    </style>
+      <div>
+        <paper-material class="widgetAuto" elevation="1">
+          <h3>General Information</h3>
+        <form is="iron-form" method="post" action="pa-inputs-validation-searchuser.php" id="formSearchUser">
+            <paper-input char-counter error-message="{{error_username}}" name="username" value="{{username}}" label="First Name or Last Name or Mail" maxlength="25" required></paper-input>
+<!-- <paper-input-date-picker label="Pick a date..." locale="en" min-date="April 1, 2014" max-date="June 30, 2025" auto-validate error-message="needs some date!" name="date" required></paper-input-date-picker> -->
+           <!--  <paper-input char-counter error-message="{{error_date}}" name="date" value="{{reservationdate}}" label="Date" maxlength="45" required></paper-input> -->
+<!-- 						<paper-datetime-picker-item icon="icons:today"  name="reservationdate" min-date="April 1, 2014" max-date="June 30, 2025" placeholder="Add reservation Date" default-time="09:00" date-format="DD/MM/YYYY" locale="en-gb" autoOK=true dateselect="{{reservationdate}}"></paper-datetime-picker-item> -->
+
+<!-- <paper-date-picker id="picker" date="{{reservationdate}}" min-date="April 1, 2014" max-date="June 30, 2025" locale="en-gb" headingFormat="DD/MM/YY"></paper-date-picker> -->
+
+
+
+            <br><br>
+            <paper-button raised class="custom indigo" onclick="document.getElementById('formSearchUser').submit()"><iron-icon icon="icons:send"></iron-icon>Submit</paper-button>
+            <div hidden="true"> <!-- change in debug to false-->
+            <h3>Output</h3>
+            <div class="output" ></div>
+            <br>
+            <h3>Answer from server</h3>
+            <div class="outputServer"></div>
+            <br>
+            </div>
+            <!-- uncomment his.querySelector('.outputServer')  in javascript-->
+
+        </form>
+ </paper-material>
+      </div>
+
+    <paper-toast id="formSearchUserOK" text="User Found!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="formSearchUserError" text="ERROR user not found!!!" class="fit-bottom"></paper-toast>
+
+    
+
+
+<pa-simple-grid>
+
+      <div>
+        <paper-material class="widgetAuto" elevation="1">
+          <h3>General Information</h3>
+
+       <!--    <pa-profile-picture profile="{{profile}}"></pa-profile-picture> -->
+<form is="iron-form" method="post" action="pa-inputs-validation-searchuser-update.php" id="formUpdateUser">
+          <pa-simple-grid md-cols="2">
+            <div>
+              <paper-input name="firstname" label="First Name" value="{{data.0.firstname}}" id="profileName" auto-validate required on-keyup="showMessage"></paper-input>
+<paper-input name="username" label="User Name" value="{{data.0.username}}" id="profileName" auto-validate required on-keyup="showMessage"></paper-input>
+             <paper-input name="mail" label="Email" value="{{ data.0.mail }}"   on-keyup="showMessage"></paper-input>
+<paper-input name="address" label="Address" value="{{ data.0.address }}"   on-keyup="showMessage"></paper-input>
+            </div>
+            <div>
+              <paper-input name="lastname" label="Last Name" value="{{data.0.lastname}}" auto-validate required on-keyup="showMessage"></paper-input>
+              <paper-input name="phone" label="Phone" value="{{ data.0.phone }}" on-keyup="showMessage"></paper-input>
+<paper-input name="create" label="Created" value="{{ data.0.created }}"  disabled></paper-input>
+<paper-input name="updated" label="Updated" value="{{ data.0.updated }}"   disabled></paper-input>
+<paper-input name="id" label="Id" value="{{ data.0.id }}" hidden></paper-input>
+
+            </div>
+          </pa-simple-grid>
+</form>
+        </paper-material>
+      </div>
+      
+    </pa-simple-grid>
+
+    <paper-toast id="saveDataMsg" text="Your data has been saved."></paper-toast>
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-inputs-validation-searchuser',
+        properties: {
+            username: {
+                type: String,
+                value: ""
+            },
+            error_username: {
+                type: String,
+                value:"Username is needed!"
+            },
+            error_date: {
+                type: String,
+                value:"Date is needed!"
+            },
+            data: Array
+            //app.session = "{{username}}";
+        },
+
+        listeners: {
+            'iron-form-response': 'formResponse',
+            'iron-form-submit': 'formSubmit',
+            'iron-form-error': 'formError'
+        },
+        formSubmit: function (event) {
+            this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        },
+        showMessage: function() {
+          var isNumber = event.keyCode >= 48 && event.keyCode <= 57;
+          var isLetter = event.keyCode >= 65 && event.keyCode <= 90;
+
+          if (!isNumber && !isLetter) {
+            return;
+          }
+
+          this.lastChange = Date.now();
+          var waitDuration = 1000;
+          var t = this;
+
+          window.setTimeout(function(){
+            if (Date.now() - t.lastChange >= waitDuration) {
+              document.querySelector('#saveDataMsg').show();
+              //RUN HERE SAVE DATA
+           document.getElementById('formUpdateUser').submit()
+
+              //RUN HERE SAVE DATA
+            }
+          }, waitDuration);
+        },
+        formResponse: function (event, response) {
+            console.log("Event Detail");
+            console.log(event.detail);
+            if (200 === response.xhr.status) {
+                var datalogin = response.xhr;
+            console.log("Event RESPONSE SOURCE");
+                console.log(datalogin.response);
+            console.log("Event RESPONSE");
+                console.log(datalogin.response.res);
+                var response = datalogin.response[0].res;
+                console.log("Event RESPONSE converted");
+                console.log(response);
+                this.querySelector('.outputServer').innerHTML = datalogin.response.res;
+                if (response == "success") {
+                  this.querySelector('.outputServer').innerHTML = datalogin.response.res;
+                  formSearchUserOK.open();
+                  this.data = datalogin.response;
+                  app.session = true;
+                  } else {
+                  //document.getElementById('formSearchUserError').setAttribute(text, "Error !!!");
+                  formSearchUserError.open();
+                  this.data = "";
+                  }
+            } else {
+              this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+              formSearchUserError.open();
+              app.session = false;
+            }
+
+        },
+        formError: function (event) {
+            this.querySelector('.outputServer').innerHTML = event.detail.error;
+        },
+        clickHandler: function(e) {
+          var button = e.target;
+          while (!button.hasAttribute('data-dialog') && button !== document.body) {
+            button = button.parentElement;
+          }
+
+          if (!button.hasAttribute('data-dialog')) {
+            return;
+          }
+
+          var id = button.getAttribute('data-dialog');
+          var dialog = document.getElementById(id);
+          if (dialog) {
+            dialog.open();
+          }
+        }
+      });
+
+
+    })();
+  </script>
+
+
+
+</dom-module>

@@ -1,0 +1,34 @@
+<link rel="import" href="widgets/pa-basic-table-checktodayreservation.html">
+
+<dom-module id="pa-checktodayreservation">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}"></pa-widgets> -->
+<!--     <pa-checktodayreservation></pa-checktodayreservation> -->
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-checktodayreservation',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+              {
+                title: 'Basic Table',
+                component: 'pa-basic-table-checktodayreservation'
+              }
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

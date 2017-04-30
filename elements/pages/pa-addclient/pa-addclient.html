@@ -1,0 +1,34 @@
+<link rel="import" href="widgets/pa-inputs-validation-addclient.html">
+
+<dom-module id="pa-addclient">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}" cols="{{cols}}"></pa-widgets> -->
+<pa-inputs-validation-addclient></pa-inputs-validation-addclient>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-addclient',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+              {
+                title: 'Validation',
+                component: 'pa-inputs-validation-addclient'
+              },
+
+             ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

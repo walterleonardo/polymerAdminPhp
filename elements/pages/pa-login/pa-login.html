@@ -1,0 +1,42 @@
+<link rel="import" href="widgets/pa-login-validation.html">
+
+<dom-module id="pa-login">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}" cols="{{cols}}"></pa-widgets> -->
+<!-- <pa-login-validation></pa-login-validation> -->
+
+
+<paper-material class="widgetAuto" elevation="1">
+<pa-login-validation></pa-login-validation>
+    </paper-material>
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-login',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+
+              {
+                title: 'Login',
+                component: 'pa-login-validation'
+              },
+
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

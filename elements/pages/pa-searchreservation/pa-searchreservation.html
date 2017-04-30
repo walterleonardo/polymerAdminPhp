@@ -1,0 +1,38 @@
+<link rel="import" href="widgets/pa-inputs-validation-searchreservation.html">
+
+<dom-module id="pa-searchreservation">
+  <template>
+    <style include="shared-styles"></style>
+
+<!--     <pa-widgets widgets="{{widgets}}"  cols="{{cols}}"></pa-widgets> -->
+<!-- <paper-material class="widgetAuto" elevation="1"> -->
+<pa-inputs-validation-searchreservation></pa-inputs-validation-searchreservation>
+<!--     </paper-material> -->
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'pa-searchreservation',
+
+        properties: {
+          widgets: {
+            type: Array,
+            value: [
+
+              {
+                title: 'Search',
+                component: 'pa-inputs-validation-searchreservation'
+              },
+
+            ]
+          }
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

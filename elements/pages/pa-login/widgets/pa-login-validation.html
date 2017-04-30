@@ -1,0 +1,153 @@
+<dom-module id="pa-login-validation">
+  <template>
+    <style include="shared-styles"></style>
+    <style is="custom-style">
+        paper-button.custom:hover {
+        background-color: var(--paper-indigo-100);
+        }
+
+        paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+        };
+        }
+        #loginOk {
+        --paper-toast-background-color: green;
+        --paper-toast-color: white;
+        }
+        #loginError {
+        --paper-toast-background-color: red;
+        --paper-toast-color: white;
+        }
+    </style>
+        <form is="iron-form" method="post" action="pa-login-validation.php" id="formLogin">
+            <paper-input char-counter error-message="{{error_username}}" name="username" value="{{username}}" label="Username / Email" pattern="^(.)+@[a-z A-Z 0-9 _]+?\.[a-zA-Z]{2,3}$" label="mail" maxlength="25" auto-validate="true"></paper-input>
+            <paper-input char-counter error-message="{{error_password}}" name="password" value="" label="Password" maxlength="45" type="Password" required></paper-input>
+            <section on-click="clickHandler">
+              <br>
+                  <paper-checkbox name="terms" required>I agree</paper-checkbox><paper-button raised data-dialog="scrolling" class="orange">Terms</paper-button>
+                  <paper-dialog id="scrolling">
+                    <h2>Terms & Conditions</h2>
+                    <paper-dialog-scrollable>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    </paper-dialog-scrollable>
+                    <div class="buttons">
+                      <paper-button dialog-confirm autofocus>OK</paper-button>
+                    </div>
+                  </paper-dialog>
+            </section>
+            <br><br>
+            <paper-button raised class="custom indigo" onclick="document.getElementById('formLogin').submit()"><iron-icon icon="icons:send"></iron-icon>Submit</paper-button>
+            <br><br>
+<div hidden>
+            <h3>Output</h3>
+            <div class="output" ></div>
+            <br>
+            <h3>Answer from server</h3>
+            <div class="outputServer"></div>
+            <br>
+</div>
+            <!-- uncomment his.querySelector('.outputServer')  in javascript-->
+
+        </form>
+    <paper-toast id="loginOk" text="You are logged ready now!!!" class="fit-bottom"></paper-toast>
+    <paper-toast id="loginError" text="ERROR username or password wrong!!!" class="fit-bottom"></paper-toast>
+
+
+
+
+
+  </template>
+  <script>
+    (function() {
+      'use strict';
+      
+      var data = {
+      id: '',
+    }
+
+      Polymer({
+        is: 'pa-login-validation',
+        properties: {
+            username: {
+                type: String,
+                value: ""
+            },
+            user: {
+                type: String,
+                value: "{{username}}"
+            },
+            error_username: {
+                type: String,
+                value:"Username is needed!"
+            },
+            error_password: {
+                type: String,
+                value:"Password is needed!"
+            },
+            //app.session = "{{username}}";
+        },
+        listeners: {
+            'iron-form-response': 'formResponse',
+            'iron-form-submit': 'formSubmit',
+            'iron-form-error': 'formError'
+        },
+        formSubmit: function (event) {
+            this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        },
+        formResponse: function (event, response) {
+            console.log("Event Detail");
+            console.log(event.detail);
+            if (200 === response.xhr.status) {
+                var datalogin = response.xhr;
+            console.log("Event RESPONSE");
+                console.log(datalogin.response.res);
+                this.querySelector('.outputServer').innerHTML = datalogin.response.res;
+                if (datalogin.response.res == "success") {
+                  loginOk.open();
+                  app.session = true;
+                  this.user = true;
+                  this.id = id;
+                  }else
+                  {
+                    loginError.open();
+                  }
+            } else {
+              this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+              messageFooterERROR.open();
+              app.session = false;
+            }
+
+        },
+        formError: function (event) {
+            this.querySelector('.outputServer').innerHTML = event.detail.error;
+        },
+        clickHandler: function(e) {
+          var button = e.target;
+          while (!button.hasAttribute('data-dialog') && button !== document.body) {
+            button = button.parentElement;
+          }
+
+          if (!button.hasAttribute('data-dialog')) {
+            return;
+          }
+
+          var id = button.getAttribute('data-dialog');
+          var dialog = document.getElementById(id);
+          if (dialog) {
+            dialog.open();
+          }
+        }
+      });
+
+
+    })();
+  </script>
+
+
+</dom-module>
