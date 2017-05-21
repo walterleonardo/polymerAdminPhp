@@ -81,11 +81,11 @@
         <paper-menu class="menu-content sublist" attr-for-selected="data-route" selected="[[route]]">
           <a data-route="login" href="/login" on-click="onDataRouteClick">
         <iron-icon icon="icons:pageview"></iron-icon>
-        <span>Login Admin</span>
+              <span>Admin Profile</span>
       </a>
             <a data-route="adduser" href="/adduser" on-click="onDataRouteClick">
         <iron-icon icon="icons:assignment-ind"></iron-icon>
-        <span>Add User Admin</span>
+                <span>Add Admin User</span>
       </a>
   <a data-route="searchuser" href="/searchuser" on-click="onDataRouteClick">
         <iron-icon icon="icons:pageview"></iron-icon>
@@ -191,11 +191,11 @@
         <span>Maps</span>
       </a>
 
-      <a data-route="tables" href="/tables" on-click="onDataRouteClick">
+        <a data-route="tables" href="/tables" on-click="onDataRouteClick" hide$="{{!isLoggedOn}}">
         <iron-icon icon="apps"></iron-icon>
         <span>Tables</span>
       </a>
-
+        <!--hide$="{{!user}}"-->
       <a data-route="user-profile" href="/user-profile" on-click="onDataRouteClick" hide$="{{!user}}">
         <iron-icon icon="account-box"></iron-icon>
         <span>User Profile</span>

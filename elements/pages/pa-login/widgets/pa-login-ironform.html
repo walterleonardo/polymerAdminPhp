@@ -1,0 +1,106 @@
+<dom-module id="pa-login-ironform">
+
+
+    <template>
+        <style include="shared-styles"></style>
+        <style is="custom-style">
+            paper-button {
+                width: 100%;
+                background: var(--primary-color);
+                color: white;
+            }
+
+            .message {
+                margin-top: 20px;
+                color: crimson;
+            }
+        </style>
+
+        <h1>LOGIN BASIC</h1>
+        <div>
+            <h3>Iron Form</h3>
+            <form is="iron-form" method="get" action="http://walii.es/tests/auth01.php" id="myForm">
+                <paper-input id='textInput'></paper-input>
+                <br/><br/>
+                <paper-button raised onclick="_submit(event)">SUBMIT</paper-button>
+                <div id='message' class="message"></div>
+            </form>
+        </div>
+    </template>
+    <script>
+        function _submit(event) {
+            console.log('_submit', event);
+            Polymer.dom(event).localTarget.parentElement.submit();
+        }
+
+        (function () {
+            'use strict';
+
+
+            addEventListener('iron-form-submit', function (event) {
+                console.log('iron-form-submit');
+                //message.innerHTML = 'echo: ' + textInput.value;
+            }.bind(this));
+
+            var data = {
+                id: '',
+            }
+
+            Polymer({
+                is: 'pa-login-ironform',
+                properties: {
+                    username: {
+                        type: String,
+                        value: ""
+                    },
+                    user: {
+                        type: String,
+                        value: "{{username}}"
+                    },
+                    answer: {
+                        type: Object
+                    },
+                    login: {
+                        type: String
+                    },
+                    password: {
+                        type: String
+                    },
+                    ajaxParams: {
+                        type: Array
+                    },
+                    error_username: {
+                        type: String,
+                        value: "Username is needed!"
+                    },
+                    error_password: {
+                        type: String,
+                        value: "Password is needed!"
+                    },
+                    //app.session = "{{username}}";
+                },
+                handleResponse: function (event, detail) {
+                    this.answer = detail.response;
+                },
+                ready: function () {
+                    this.login = "admin";
+                    this.password = "admin";
+                    this.ajaxParams = {
+                        username: this.login,
+                        password: this.password
+                    };
+                },
+                listeners: {
+                    'iron-form-response': 'formResponse',
+                    'iron-form-submit': 'formSubmit',
+                    'iron-form-error': 'formError'
+                },
+
+            });
+
+
+        })();
+    </script>
+
+
+</dom-module>

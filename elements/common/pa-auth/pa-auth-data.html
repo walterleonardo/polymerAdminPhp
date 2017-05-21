@@ -48,6 +48,13 @@
         },
 
         signIn: function() {
+          console.log("user: ");
+          console.log(this.user);
+          console.log("profile: ")
+          console.log(this.profile);
+          console.log("todos: ")
+          console.log(this.todos);
+
           this.$.auth.login();
         },
 
@@ -62,6 +69,13 @@
           if (user) {
             this.todosLocation = [this.location, 'todos', this.user.uid].join('/');
             this.profileLocation = [this.location, 'profile', this.user.uid].join('/');
+            console.log("user: ");
+            console.log(this.user);
+            console.log("profile: ")
+            console.log(this.profile);
+            console.log("todos: ")
+            console.log(this.todos);
+
           }
         },
 

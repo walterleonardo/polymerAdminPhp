@@ -25,7 +25,8 @@
     </style>
         <form is="iron-form" method="post" action="pa-login-validation.php" id="formLogin">
             <paper-input char-counter error-message="{{error_username}}" name="username" value="{{username}}" label="Username / Email" pattern="^(.)+@[a-z A-Z 0-9 _]+?\.[a-zA-Z]{2,3}$" label="mail" maxlength="25" auto-validate="true"></paper-input>
-            <paper-input char-counter error-message="{{error_password}}" name="password" value="" label="Password" maxlength="45" type="Password" required></paper-input>
+            <paper-input char-counter error-message="{{error_password}}" name="password" value="{{password}}"
+                         label="Password" maxlength="45" type="Password" required></paper-input>
             <section on-click="clickHandler">
               <br>
                   <paper-checkbox name="terms" required>I agree</paper-checkbox><paper-button raised data-dialog="scrolling" class="orange">Terms</paper-button>

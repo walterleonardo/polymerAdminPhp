@@ -5,7 +5,9 @@
     $db = new DB_CONNECT();
     $con = $db->connect();
 
-    $result = mysqli_query($con, "SELECT * FROM getdata") or die(mysqli_error($con));
+    //$result = mysqli_query($con, "SELECT * FROM reservations") or die(mysqli_error($con));
+    $result = mysqli_query($con, "SELECT * FROM reservations") or die(mysqli_error($con));
+
 
     while($row=mysqli_fetch_assoc($result))
     $output[]=$row;

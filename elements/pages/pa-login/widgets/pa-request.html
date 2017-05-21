@@ -1,0 +1,68 @@
+<dom-module id="pa-request">
+
+    <template>
+        <style>
+            div {
+                border-radius: 6px;
+                padding: 10px;
+                background-color: #ddd;
+                width: 120px;
+                text-align: center;
+            }
+        </style>
+        <iron-ajax
+                id="elajax"
+                url="http://jsonplaceholder.typicode.com/posts"
+                handle-as="json"
+                loading="{{cargando}}"
+                method="POST"
+                content-type="application/json"
+                on-response="respuestaRecibida"
+                on-error="errorRecibido"
+        ></iron-ajax>
+        <paper-spinner alt="Cargando el usuario..." active="[[cargando]]"></paper-spinner>
+
+        <div on-tap="guardar">
+            Guardar post!
+        </div>
+
+        <p>
+            [[mensaje]]
+        </p>
+
+    </template>
+    <script>
+        Polymer({
+            is: "pa-request",
+
+            properties: {
+                cargando: Boolean,
+            },
+
+            guardar: function () {
+                var obj = {
+                    title: 'Título de un post',
+                    body: 'Este es el cuerpo de un post',
+                    userId: 1
+                };
+                this.$.elajax.body = obj;
+                this.$.elajax.generateRequest();
+            },
+
+            respuestaRecibida: function (e, request) {
+                if (request.succeeded) {
+                    this.mensaje = 'la solicitud se resolvió correctamente con código ' + request.status
+                } else {
+                    this.mensaje = 'la solicitud nos ofreció resultados incorrectos, con código ' + request.status
+                }
+            },
+
+            errorRecibido: function (e, error) {
+                console.log(error.request.status);
+                this.mensaje = 'Error en la solicitud, con código ' + error.request.status;
+            }
+        });
+    </script>
+
+
+</dom-module>

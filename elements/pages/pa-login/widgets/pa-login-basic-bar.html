@@ -1,0 +1,449 @@
+<!--<link rel="import" href="../polymer/polymer.html">-->
+<!--<link rel="import" href="../paper-styles/default-theme.html">-->
+<!--<link rel="import" href="../paper-styles/typography.html">-->
+<!--<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">-->
+
+<dom-module id="pa-login-basic-bar">
+    <template>
+        <style include="shared-styles"></style>
+        <style is="custom-style">
+            :host {
+                display: block;
+                padding-right: 24px;
+            }
+
+            a.singin-link {
+                text-transform: uppercase;
+                color: var(--text-primary-color);
+                text-decoration: none;
+                font-size: 14px;
+                display: none;
+            }
+
+            a.singin-link[show] {
+                display: block;
+            }
+
+            a.singin-link:hover {
+            }
+
+            .account-menu {
+                position: relative;
+                display: none;
+            }
+
+            .account-menu[show] {
+                display: block;
+            }
+
+            .profile-pic {
+                width: 45px;
+                height: 45px;
+                overflow: hidden;
+                cursor: pointer;
+            }
+
+            .profile-pic img {
+                width: 100%;
+            }
+
+            .dropdown-content {
+                display: block;
+                position: relative;
+                border-radius: 2px;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+                background: white;
+                border: none;
+                outline: none;
+                padding: 12px 16px;
+                min-width: 140px;
+                color: var(--primary-text-color);
+            }
+
+            .username {
+                margin-bottom: 12px;
+            }
+
+            .dropdown-content a {
+                display: block;
+                position: relative;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 32px;
+                white-space: nowrap;
+                align-items: center;
+                color: var(--primary-text-color);
+            }
+
+            .dropdown-content a:hover {
+                color: var(--default-primary-color);
+            }
+        </style>
+        <div>
+            <h1>{{profile.name}}</h1>
+            <span class="flex"></span>
+            <div class="account-menu" show$="{{!user}}">
+                <div class="profile-pic dropdown-trigger" on-click="openlogin">SIGN IN
+                    <!--<img src="{{profile.picture}}">-->
+                    <iron-icon icon="icons:perm-identity"></iron-icon>
+                </div>
+
+                <iron-dropdown id="dropdownlogin"
+                               vertical-align="top"
+                               horizontal-align="right"
+                               open-animation-config="[[openAnimationConfig]]"
+                               close-animation-config="[[closeAnimationConfig]]">
+
+                    <div class="dropdown-content">
+                        <form is="iron-form" method="post" action="http://walii.es/tests/auth01.php" id="formLogin">
+                            <paper-input char-counter error-message="{{error_username}}" name="username"
+                                         value="{{username}}"
+                                         label="User Name" maxlength="25" required auto-validate></paper-input>
+                            <paper-input type="password" char-counter error-message="{{error_password}}" name="password"
+                                         value="{{password}}" label="User Password" maxlength="25" required
+                                         auto-validate></paper-input>
+
+                            <br><br>
+                            <paper-button raised class="custom indigo"
+                                          onclick="document.getElementById('formLogin').submit()"
+                                          id="submitbutton">
+                                <iron-icon icon="icons:send"></iron-icon>
+                                Submit
+                            </paper-button>
+                            <paper-spinner id="spinner" hidden="{{!cargando}}"></paper-spinner>
+                            <br><br>
+                            <div hidden="{{!debug}}">
+                                <h3>Output</h3>
+                                <div class="output"></div>
+                                <br>
+                                <h3>Answer from server</h3>
+                                <div class="outputServer"></div>
+                                <br>
+                            </div>
+                            <!-- uncomment his.querySelector('.outputServer')  in javascript-->
+
+                        </form>
+                    </div>
+
+                </iron-dropdown>
+            </div>
+
+
+            <div class="account-menu" show$="{{user}}">
+                <div class="profile-pic dropdown-trigger" on-click="openprofile">
+                    <iron-icon icon="icons:folder-shared"></iron-icon>
+                    USER
+                </div>
+
+                <iron-dropdown id="dropdownprofile"
+                               vertical-align="top"
+                               horizontal-align="right"
+                               open-animation-config="[[openAnimationConfig]]"
+                               close-animation-config="[[closeAnimationConfig]]">
+
+                    <div class="dropdown-content">
+
+                        <div class="username"><span>{{profile.name}}</span> <span>{{profile.lastname}}</span></div>
+                        <a data-route="user-profile" href="/user-profile" on-click="closeprofile">Profile</a>
+                        <a href="javascript:void(0)" on-click="signOutClick">Sign out</a>
+                    </div>
+
+                </iron-dropdown>
+            </div>
+
+            <paper-toast id="loginOk" text="Login OK!!!" class="fit-bottom"></paper-toast>
+            <paper-toast id="loginError" text="ERROR Username or password dont found!!!"
+                         class="fit-bottom"></paper-toast>
+        </div>
+    </template>
+    <script>
+        (function () {
+            'use strict';
+
+            var data = {
+                id: '',
+            }
+
+            Polymer({
+                is: 'pa-login-basic-bar',
+                properties: {
+                    debug: {
+                        type: Boolean,
+                        value: false
+                    },
+                    user: {
+                        type: Object,
+                        notify: true,
+                        value: false
+                    },
+//                    user: {
+//                        type: Object,
+//                        value: function () {
+//                            return {};
+//                        },
+//                        notify: true,
+//                        observer: '_userChanged'
+//                    },
+                    isLoggedOn: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+                    needsLogon: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+
+                    cargando: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    username: {
+                        type: String,
+                        value: ""
+                    },
+                    login: {
+                        type: String
+                    },
+                    password: {
+                        type: String
+                    },
+                    ajaxParams: {
+                        type: Array
+                    },
+                    error_username: {
+                        type: String,
+                        value: "Username is needed!"
+                    },
+                    error_password: {
+                        type: String,
+                        value: "Password is needed!"
+                    },
+                    answer: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+
+                    todos: {
+                        type: Array,
+                        notify: true
+                    },
+
+                    profile: {
+                        type: Object,
+                        notify: true
+                    },
+                    lastChange: {
+                        type: Number
+                    },
+                    openAnimationConfig: {
+                        type: Array,
+                        value: function () {
+                            return [{
+                                name: 'fade-in-animation',
+                                timing: {
+                                    delay: 150,
+                                    duration: 50
+                                }
+                            }, {
+                                name: 'expand-animation',
+                                timing: {
+                                    delay: 150,
+                                    duration: 200
+                                }
+                            }];
+                        }
+                    },
+
+                    closeAnimationConfig: {
+                        type: Array,
+                        value: function () {
+                            return [{
+                                name: 'fade-out-animation',
+                                timing: {
+                                    duration: 200
+                                }
+                            }];
+                        }
+                    },
+
+                    //app.session = "{{username}}";
+                },
+                listeners: {
+                    'iron-form-response': 'formResponse',
+                    'iron-form-submit': 'formSubmit',
+                    'iron-form-error': 'formError'
+                },
+                _toArray: function (obj) {
+                    return Object.keys(obj).map(function (key) {
+                        return {
+                            key: key,
+                            value: obj[key]
+                        };
+                    });
+                },
+
+                attached: function () {
+                    //first see if our cookie exists - because if it does we may already be logged in
+                    if (document.cookie.match(/^(.*; +)?MYAPP=[^;]+(.*)?$/)) {
+                        this.$.validateuser.generateRequest();
+                    } else {
+                        this.importHref(this.resolveUrl('my-logon.html'), function () {
+                            this.needsLogon = true;
+                            this.waiting = false;
+                        }, null, true);
+                    }
+                },
+                logOff: function () {
+                    //this.$.logoff.generateRequest(); //Tell server but don't wait to find out if it saw it or not
+                    this.user = {};
+                    document.cookie = 'MYAPP=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    this.importHref(this.resolveUrl('my-logon.html'), function () {
+                        this.needsLogon = true;
+                    }, null, true);
+                },
+
+                formSubmit: function (event) {
+                    spinner.active = true;
+                    spinner.hidden = false;
+                    this.cargando = true;
+                    this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+                },
+
+                formResponse: function (event, response) {
+                    console.log("Event Detail");
+                    console.log(response.xhr);
+                    spinner.active = false;
+                    spinner.hidden = true;
+                    this.cargando = false;
+                    if (200 === response.xhr.status) {
+                        var datalogin = response.xhr;
+                        console.log("Event RESPONSE");
+                        console.log(datalogin.response);
+                        this.querySelector('.outputServer').innerHTML = datalogin.response.message;
+                        this.answer = datalogin.response;
+                        console.log(this.answer);
+                        this.errorMessage = datalogin.response.message;
+                        if (datalogin.response.status == "success") {
+                            this.$.loginOk.open();
+                            this.user = {
+                                uid: datalogin.response.uid,
+                                name: datalogin.response.username
+                            };
+                            this.profile = {
+                                name: datalogin.response.username,
+                                lastname: datalogin.response.lastname,
+                                email: datalogin.response.mail,
+                                phone: datalogin.response.tel,
+                                picture: '',
+                                department: '',
+                                job: '',
+                                office: '',
+                                room: '',
+                                employeeid: this.answer.employeeid,
+                                adminlevel: this.answer.adminlevel,
+                                notification: {
+                                    message: true,
+                                    invitation: true,
+                                    changes: false,
+                                    login: false,
+                                    weekly: true,
+                                    daily: false
+                                },
+                            }
+
+
+                        } else {
+                            this.logOff();
+                            this.user = null;
+                            this.$.loginError.open();
+                        }
+                    } else {
+                        this.logOff();
+                        this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+                        this.$.messageFooterERROR.open();
+                    }
+
+                },
+                formError: function (event) {
+                    this.querySelector('.outputServer').innerHTML = event.detail.error;
+                },
+                clickHandler: function (e) {
+                    var button = e.target;
+                    while (!button.hasAttribute('data-dialog') && button !== document.body) {
+                        button = button.parentElement;
+                    }
+
+                    if (!button.hasAttribute('data-dialog')) {
+                        return;
+                    }
+
+                    var id = button.getAttribute('data-dialog');
+                    var dialog = document.getElementById(id);
+                    if (dialog) {
+                        dialog.open();
+                    }
+                },
+                _userChanged: function (user) {
+                    if (user.name !== undefined && user.name.length > 0) {
+                        this.isLoggedOn = true;
+
+                    } else {
+                        this.isLoggedOn = false;
+                    }
+                },
+                showMessage: function () {
+                    var isNumber = event.keyCode >= 48 && event.keyCode <= 57;
+                    var isLetter = event.keyCode >= 65 && event.keyCode <= 90;
+
+                    if (!isNumber && !isLetter) {
+                        return;
+                    }
+
+                    this.lastChange = Date.now();
+                    var waitDuration = 1000;
+                    var t = this;
+
+                    window.setTimeout(function () {
+                        if (Date.now() - t.lastChange >= waitDuration) {
+                            document.querySelector('#saveDataMsg').show();
+                        }
+                    }, waitDuration);
+                },
+                doLogOff: function () {
+                    //this.$.session.logOff();
+                    this.user = {};
+                    this.username = '';
+                    this.password = '';
+                },
+                openprofile: function () {
+                    this.$.dropdownprofile.open();
+                },
+
+                closeprofile: function () {
+                    this.$.dropdownprofile.close();
+                },
+                openlogin: function () {
+                    this.$.dropdownlogin.open();
+                },
+
+                closeLogin: function () {
+                    this.$.dropdownlogin.close();
+                },
+                signOutClick: function () {
+                    this.$.dropdownprofile.close();
+                    this.$.dropdownlogin.close();
+                    this.user = null;
+                },
+
+            });
+
+
+        })();
+    </script>
+
+
+</dom-module>

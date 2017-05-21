@@ -1,0 +1,90 @@
+<dom-module id="pa-auth-data-login">
+    <template>
+
+    </template>
+
+    <script>
+        (function () {
+            'use strict';
+            Polymer({
+                is: 'pa-auth-data-login',
+
+                properties: {
+                    user: {
+                        observer: '_userChanged',
+                        notify: true
+                    },
+
+                    _firebaseConnected: {
+                        value: false
+                    },
+
+                    todos: {
+                        type: Array,
+                        notify: true
+                    },
+
+                    profile: {
+                        type: Object,
+                        notify: true
+                    }
+                },
+
+                signIn: function () {
+                    this.$.auth.login();
+                },
+
+                signOut: function () {
+                    //var ref = new Firebase(this.location);
+                    //ref.unauth();
+                    this.user = null;
+                },
+
+                // Setup user ref in firebase if auth succeeds
+                _userChanged: function (user) {
+                    if (user) {
+                        this.todosLocation = [this.location, 'todos', this.user.uid].join('/');
+                        this.profileLocation = [this.location, 'profile', this.user.uid].join('/');
+                    }
+                },
+
+                setDefaultProfile: function () {
+                    this.profile = {
+                        name: this.user.name,
+                        lastname: this.user.lastname,
+                        email: '',
+                        phone: '',
+                        picture: '',
+                        department: '',
+                        job: '',
+                        office: '',
+                        room: '',
+                        notification: {
+                            message: true,
+                            invitation: true,
+                            changes: false,
+                            login: false,
+                            weekly: true,
+                            daily: false
+                        }
+                    };
+                },
+
+                _profileLoaded: function () {
+                    this.set('profile', this.profile);
+                    if (!this.profile) {
+                        this.setDefaultProfile();
+                    }
+                },
+
+                _todoLoaded: function () {
+                    this._firebaseConnected = true;
+                    this.todos = this.fbTodos;
+                    this.linkPaths('fbTodos', 'todos');
+                }
+
+            });
+        })();
+    </script>
+
+</dom-module>

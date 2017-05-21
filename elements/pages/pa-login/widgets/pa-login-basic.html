@@ -1,0 +1,412 @@
+<dom-module id="pa-login-basic">
+
+
+    <template>
+        <style include="shared-styles"></style>
+        <style is="custom-style">
+            paper-button.custom:hover {
+                background-color: var(--paper-indigo-100);
+            }
+
+            paper-button.indigo {
+                background-color: var(--paper-indigo-500);
+                color: white;
+                --paper-button-raised-keyboard-focus: {
+                    background-color: var(--paper-pink-a200) !important;
+                    color: white !important;
+                };
+            }
+
+            #loginOk {
+                --paper-toast-background-color: green;
+                --paper-toast-color: white;
+            }
+
+            #loginError {
+                --paper-toast-background-color: red;
+                --paper-toast-color: white;
+            }
+        </style>
+        <div hidden="[[isLoggedOn]]">
+            <h1>LOGIN BASIC</h1>
+            <form is="iron-form" method="post" action="http://walii.es/tests/auth01.php" id="formLogin">
+                <paper-input char-counter error-message="{{error_username}}" name="username" value="{{username}}"
+                             label="User Name" maxlength="25" required auto-validate></paper-input>
+                <paper-input type="password" char-counter error-message="{{error_password}}" name="password"
+                             value="{{password}}" label="User Password" maxlength="25" required
+                             auto-validate></paper-input>
+
+                <section on-click="clickHandler">
+                    <br>
+                    <paper-checkbox required>I agree</paper-checkbox>
+                    <paper-button raised data-dialog="scrolling" class="orange">Terms</paper-button>
+                    <paper-dialog id="scrolling">
+                        <h2>Terms & Conditions</h2>
+                        <paper-dialog-scrollable>
+                            <p>admin .</p>
+                            <p>admin .</p>
+                        </paper-dialog-scrollable>
+                        <div class="buttons">
+                            <paper-button dialog-confirm autofocus>OK</paper-button>
+                        </div>
+                    </paper-dialog>
+                </section>
+                <br><br>
+                <paper-button raised class="custom indigo" onclick="document.getElementById('formLogin').submit()"
+                              id="submitbutton">
+                    <iron-icon icon="icons:send"></iron-icon>
+                    Submit
+                </paper-button>
+                <paper-spinner id="spinner" hidden></paper-spinner>
+                <br><br>
+                <div hidden="{{!cargando}}">CARGANDO...</div>
+                <div hidden="{{!debug}}">
+                    <h3>Output</h3>
+                    <div class="output"></div>
+                    <br>
+                    <h3>Answer from server</h3>
+                    <div class="outputServer"></div>
+                    <br>
+                </div>
+                <!-- uncomment his.querySelector('.outputServer')  in javascript-->
+
+            </form>
+
+            <div id="respuesta" class="respuesta" hidden="{{!debug}}">
+                <h2 style="color: red; font-style: oblique">{{errorMessage}} </h2>
+                <template is="dom-repeat" items="[[_toArray(answer)]]">
+                    <span style="color:#71a83b">{{item.key}}</span>
+                    <br><span style="color:black">{{item.value}}</span>
+                    <br>
+                    <hr>
+                </template>
+                <br> <br> <br>
+            </div>
+        </div>
+
+        <pa-simple-grid hidden="[[!isLoggedOn]]">
+
+            <div>
+                <paper-material class="widgetAuto" elevation="1">
+                    <h3>General Information</h3>
+                    <pa-simple-grid md-cols="2">
+                        <div>
+                            <paper-input label="First Name" value="{{ profile.name }}" id="profileName" auto-validate
+                                         required on-keyup="showMessage"></paper-input>
+                            <paper-input label="Last Name" value="{{ profile.lastname }}" auto-validate required
+                                         on-keyup="showMessage"></paper-input>
+                        </div>
+                        <div>
+                            <paper-input label="Department" value="{{ profile.department }}" value=""
+                                         on-keyup="showMessage"></paper-input>
+                            <paper-input label="Job Title" value="{{ profile.job }}"
+                                         on-keyup="showMessage"></paper-input>
+                        </div>
+                    </pa-simple-grid>
+
+                </paper-material>
+            </div>
+
+            <div>
+                <paper-material class="widgetAuto" elevation="1">
+                    <h3>Contact Information</h3>
+                    <pa-simple-grid md-cols="2">
+                        <div>
+                            <gold-email-input label="Email" value="{{ profile.email }}" auto-validate
+                                              on-keyup="showMessage"></gold-email-input>
+                            <gold-phone-input label="Phone" value="{{ profile.phone }}" auto-validate
+                                              on-keyup="showMessage"></gold-phone-input>
+                        </div>
+                        <div>
+                            <paper-input label="Office Location" value="{{ profile.office }}"
+                                         on-keyup="showMessage"></paper-input>
+                            <paper-input label="Room" value="{{ profile.room }}" on-keyup="showMessage"></paper-input>
+                        </div>
+                    </pa-simple-grid>
+                </paper-material>
+            </div>
+
+            <div>
+                <paper-material class="widgetAuto" elevation="1">
+                    <h3>Send Email Notifications</h3>
+                    <pa-simple-grid md-cols="2" class="notifications-block">
+                        <div>
+                            <div class="line">
+                                <paper-toggle-button checked="{{profile.notification.message}}"
+                                                     on-change="showMessage"></paper-toggle-button>
+                                <span>When I receive a message</span></div>
+                            <div class="line">
+                                <paper-toggle-button checked="{{profile.notification.invitation}}"
+                                                     on-change="showMessage"></paper-toggle-button>
+                                <span>When Someone sends me an invitation</span></div>
+                            <div class="line">
+                                <paper-toggle-button checked="{{profile.notification.changes}}"
+                                                     on-change="showMessage"></paper-toggle-button>
+                                <span>When profile information changes</span></div>
+                        </div>
+                        <div>
+                            <div class="line">
+                                <paper-toggle-button checked="{{profile.notification.login}}"
+                                                     on-change="showMessage"></paper-toggle-button>
+                                <span>When anyone logs into your account from a new device or browser</span></div>
+                            <div class="line">
+                                <paper-toggle-button checked="{{profile.notification.weekly}}"
+                                                     on-change="showMessage"></paper-toggle-button>
+                                <span>Weekly Reports</span></div>
+                            <div class="line">
+                                <paper-toggle-button checked="{{profile.notification.daily}}"
+                                                     on-change="showMessage"></paper-toggle-button>
+                                <span>Daily Reports</span></div>
+                        </div>
+                    </pa-simple-grid>
+                </paper-material>
+
+                <br><br>
+                <a href="javascript:void(0)" on-click="doLogOff">Sign out</a>
+                <!--<paper-button raised class="custom indigo" onclick="doLogOff"><iron-icon icon="icons:send" ></iron-icon>LogOut</paper-button>-->
+                <br><br>
+            </div>
+
+        </pa-simple-grid>
+
+        <paper-toast id="saveDataMsg" text="Your data has been saved."></paper-toast>
+
+        <paper-toast id="loginOk" text="Login OK!!!" class="fit-bottom"></paper-toast>
+        <paper-toast id="loginError" text="ERROR Username or password dont found!!!" class="fit-bottom"></paper-toast>
+    </template>
+    <script>
+        (function () {
+            'use strict';
+
+            var data = {
+                id: '',
+            }
+
+            Polymer({
+                is: 'pa-login-basic',
+                properties: {
+                    debug: {
+                        type: Boolean,
+                        value: false
+                    },
+
+                    user: {
+                        type: Object,
+                        value: function () {
+                            return {};
+                        },
+                        notify: true,
+                        observer: '_userChanged'
+                    },
+                    isLoggedOn: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+                    needsLogon: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+
+                    cargando: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    username: {
+                        type: String,
+                        value: ""
+                    },
+                    login: {
+                        type: String
+                    },
+                    password: {
+                        type: String
+                    },
+                    ajaxParams: {
+                        type: Array
+                    },
+                    error_username: {
+                        type: String,
+                        value: "Username is needed!"
+                    },
+                    error_password: {
+                        type: String,
+                        value: "Password is needed!"
+                    },
+                    answer: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+
+                    todos: {
+                        type: Array,
+                        notify: true
+                    },
+
+                    profile: {
+                        type: Object,
+                        notify: true
+                    },
+                    lastChange: {
+                        type: Number
+                    }
+
+                    //app.session = "{{username}}";
+                },
+                listeners: {
+                    'iron-form-response': 'formResponse',
+                    'iron-form-submit': 'formSubmit',
+                    'iron-form-error': 'formError'
+                },
+                _toArray: function (obj) {
+                    return Object.keys(obj).map(function (key) {
+                        return {
+                            key: key,
+                            value: obj[key]
+                        };
+                    });
+                },
+
+                attached: function () {
+                    //first see if our cookie exists - because if it does we may already be logged in
+                    if (document.cookie.match(/^(.*; +)?MYAPP=[^;]+(.*)?$/)) {
+                        this.$.validateuser.generateRequest();
+                    } else {
+                        this.importHref(this.resolveUrl('my-logon.html'), function () {
+                            this.needsLogon = true;
+                            this.waiting = false;
+                        }, null, true);
+                    }
+                },
+                logOff: function () {
+                    //this.$.logoff.generateRequest(); //Tell server but don't wait to find out if it saw it or not
+                    this.user = {};
+                    document.cookie = 'MYAPP=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    this.importHref(this.resolveUrl('my-logon.html'), function () {
+                        this.needsLogon = true;
+                    }, null, true);
+                },
+
+                formSubmit: function (event) {
+                    spinner.active = true;
+                    spinner.hidden = false;
+                    this.cargando = true;
+                    this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+                },
+
+                formResponse: function (event, response) {
+                    console.log("Event Detail");
+                    console.log(response.xhr);
+                    spinner.active = false;
+                    spinner.hidden = true;
+                    this.cargando = false;
+                    if (200 === response.xhr.status) {
+                        var datalogin = response.xhr;
+                        console.log("Event RESPONSE");
+                        console.log(datalogin.response);
+                        this.querySelector('.outputServer').innerHTML = datalogin.response.message;
+                        this.answer = datalogin.response;
+                        console.log(this.answer);
+                        this.errorMessage = datalogin.response.message;
+                        if (datalogin.response.status == "success") {
+                            loginOk.open();
+                            this.user = {
+                                uid: datalogin.response.uid,
+                                name: datalogin.response.username
+                            };
+                            this.profile = {
+                                name: this.answer.username,
+                                lastname: this.answer.username,
+                                email: this.answer.username,
+                                phone: this.answer.tel,
+                                picture: '',
+                                department: '',
+                                job: '',
+                                office: '',
+                                room: '',
+                                employeeid: this.answer.employeeid,
+                                adminlevel: this.answer.adminlevel,
+                                notification: {
+                                    message: true,
+                                    invitation: true,
+                                    changes: false,
+                                    login: false,
+                                    weekly: true,
+                                    daily: false
+                                },
+                            }
+
+
+                        } else {
+                            this.logOff();
+                            loginError.open();
+                        }
+                    } else {
+                        this.logOff();
+                        this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+                        messageFooterERROR.open();
+                    }
+
+                },
+                formError: function (event) {
+                    this.querySelector('.outputServer').innerHTML = event.detail.error;
+                },
+                clickHandler: function (e) {
+                    var button = e.target;
+                    while (!button.hasAttribute('data-dialog') && button !== document.body) {
+                        button = button.parentElement;
+                    }
+
+                    if (!button.hasAttribute('data-dialog')) {
+                        return;
+                    }
+
+                    var id = button.getAttribute('data-dialog');
+                    var dialog = document.getElementById(id);
+                    if (dialog) {
+                        dialog.open();
+                    }
+                },
+                _userChanged: function (user) {
+                    if (user.name !== undefined && user.name.length > 0) {
+                        this.isLoggedOn = true;
+
+                    } else {
+                        this.isLoggedOn = false;
+                    }
+                },
+                showMessage: function () {
+                    var isNumber = event.keyCode >= 48 && event.keyCode <= 57;
+                    var isLetter = event.keyCode >= 65 && event.keyCode <= 90;
+
+                    if (!isNumber && !isLetter) {
+                        return;
+                    }
+
+                    this.lastChange = Date.now();
+                    var waitDuration = 1000;
+                    var t = this;
+
+                    window.setTimeout(function () {
+                        if (Date.now() - t.lastChange >= waitDuration) {
+                            document.querySelector('#saveDataMsg').show();
+                        }
+                    }, waitDuration);
+                },
+                doLogOff: function () {
+                    //this.$.session.logOff();
+                    this.user = {};
+                    this.username = '';
+                    this.password = '';
+                },
+
+            });
+
+
+        })();
+    </script>
+
+
+</dom-module>

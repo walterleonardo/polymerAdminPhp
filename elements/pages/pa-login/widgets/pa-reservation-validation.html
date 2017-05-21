@@ -1,0 +1,204 @@
+<dom-module id="pa-reservation-validation">
+    <template>
+        <style include="shared-styles"></style>
+        <style is="custom-style">
+            paper-button.custom:hover {
+                background-color: var(--paper-indigo-100);
+            }
+
+            paper-button.indigo {
+                background-color: var(--paper-indigo-500);
+                color: white;
+                --paper-button-raised-keyboard-focus: {
+                    background-color: var(--paper-pink-a200) !important;
+                    color: white !important;
+                };
+            }
+
+            #loginOk {
+                --paper-toast-background-color: green;
+                --paper-toast-color: white;
+            }
+
+            #loginError {
+                --paper-toast-background-color: red;
+                --paper-toast-color: white;
+            }
+        </style>
+        <form is="iron-form" method="get" action="http://viajesibiza.mateu.io/resources/pickupconfirmation/q?"
+              id="formLogin">
+            <paper-input char-counter error-message="{{error_username}}" name="p" value="{{username}}"
+                         label="Reservation Code" maxlength="25" required auto-validate></paper-input>
+
+            <section on-click="clickHandler">
+                <br>
+                <paper-checkbox required>I agree</paper-checkbox>
+                <paper-button raised data-dialog="scrolling" class="orange">Terms</paper-button>
+                <paper-dialog id="scrolling">
+                    <h2>Terms & Conditions</h2>
+                    <paper-dialog-scrollable>
+                        <p>Usuario OK TIH0000742T .</p>
+                        <p>Usuario no existe aun 1493730866128 .</p>
+                        <p>Usuario no lo encuentra estanolaencuentra .</p>
+                    </paper-dialog-scrollable>
+                    <div class="buttons">
+                        <paper-button dialog-confirm autofocus>OK</paper-button>
+                    </div>
+                </paper-dialog>
+            </section>
+            <br><br>
+            <paper-button raised class="custom indigo" onclick="document.getElementById('formLogin').submit()"
+                          id="submitbutton">
+                <iron-icon icon="icons:send"></iron-icon>
+                Submit
+            </paper-button>
+            <paper-spinner id="spinner" hidden></paper-spinner>
+            <br><br>
+            <div hidden="{{!cargando}}">CARGANDO...</div>
+            <div hidden="{{!debug}}">
+                <h3>Output</h3>
+                <div class="output"></div>
+                <br>
+                <h3>Answer from server</h3>
+                <div class="outputServer"></div>
+                <br>
+            </div>
+            <!-- uncomment his.querySelector('.outputServer')  in javascript-->
+
+        </form>
+
+        <div id="respuesta" class="respuesta">
+            <h2 style="color: red; font-style: oblique">{{errorMessage}} </h2>
+            <template is="dom-repeat" items="[[_toArray(answer)]]">
+                <span style="color:#71a83b">{{item.key}}</span>
+                <br><span style="color:black">{{item.value}}</span>
+                <br>
+                <hr>
+            </template>
+            <br> <br> <br>
+        </div>
+        <paper-toast id="loginOk" text="Reservation OK!!!" class="fit-bottom"></paper-toast>
+        <paper-toast id="loginError" text="ERROR Reservation dont found!!!" class="fit-bottom"></paper-toast>
+
+
+    </template>
+    <script>
+        (function () {
+            'use strict';
+
+            var data = {
+                id: '',
+            }
+
+
+            Polymer({
+                is: 'pa-reservation-validation',
+                properties: {
+                    debug: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    username: {
+                        type: String,
+                        value: ""
+                    },
+                    user: {
+                        type: String,
+                        value: "{{username}}"
+                    },
+                    error_username: {
+                        type: String,
+                        value: "Reservation number is needed!"
+                    },
+                    error_password: {
+                        type: String,
+                        value: "Password is needed!"
+                    },
+                    cargando: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    errorMessage: {
+                        type: String,
+                    },
+                    answer: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    //app.session = "{{username}}";
+                },
+                listeners: {
+                    'iron-form-response': 'formResponse',
+                    'iron-form-submit': 'formSubmit',
+                    'iron-form-error': 'formError'
+                },
+                _toArray: function (obj) {
+                    return Object.keys(obj).map(function (key) {
+                        return {
+                            key: key,
+                            value: obj[key]
+                        };
+                    });
+                },
+                formSubmit: function (event) {
+                    spinner.active = true;
+                    spinner.hidden = false;
+                    this.cargando = true;
+                    this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+                },
+
+                formResponse: function (event, response) {
+                    console.log("Event Detail");
+                    console.log(response.xhr);
+                    spinner.active = false;
+                    spinner.hidden = true;
+                    this.cargando = false;
+                    if (200 === response.xhr.status) {
+                        var datalogin = response.xhr;
+                        console.log("Event RESPONSE");
+                        console.log(datalogin.response);
+                        this.querySelector('.outputServer').innerHTML = datalogin.response.message;
+                        this.answer = datalogin.response.service;
+                        this.errorMessage = datalogin.response.message;
+                        if (datalogin.response.result == "ok") {
+                            loginOk.open();
+
+                        } else {
+                            loginError.open();
+                        }
+                    } else {
+                        this.querySelector('.outputServer').innerHTML = "Mysql ERROR";
+                        messageFooterERROR.open();
+                    }
+
+                },
+                formError: function (event) {
+                    this.querySelector('.outputServer').innerHTML = event.detail.error;
+                },
+                clickHandler: function (e) {
+                    var button = e.target;
+                    while (!button.hasAttribute('data-dialog') && button !== document.body) {
+                        button = button.parentElement;
+                    }
+
+                    if (!button.hasAttribute('data-dialog')) {
+                        return;
+                    }
+
+                    var id = button.getAttribute('data-dialog');
+                    var dialog = document.getElementById(id);
+                    if (dialog) {
+                        dialog.open();
+                    }
+                },
+
+
+            });
+
+        })();
+
+    </script>
+
+
+</dom-module>
